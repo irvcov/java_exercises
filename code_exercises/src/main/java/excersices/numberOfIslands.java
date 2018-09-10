@@ -26,6 +26,7 @@ public class numberOfIslands {
             return;
         }
 
+        //System.out.println("x:"+String.valueOf(i)+", y:"+String.valueOf(j));
         markIsland(mx, i+1, j, l, r);
         markIsland(mx, i-1, j, l, r);
         markIsland(mx, i, j+1, l, r);

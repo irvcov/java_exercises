@@ -1,8 +1,7 @@
 package excersices;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Find the first names and last names of all the employees managed by james anderson’s manager.
@@ -111,6 +110,89 @@ public class DigitOnUs {
         return sum + exe4(num/10);
     }
 
+    public static class Movie {
+        int rate;
+        String title;
+
+        public Movie(String title, int rate) {
+            this.rate = rate;
+            this.title = title;
+        }
+
+        public int getRate() {
+            return rate;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("Title: %s, Rate: %s - ", this.title, this.rate);
+        }
+    }
+
+    /**
+     * https://dzone.com/articles/java-8-comparator-how-to-sort-a-list
+     * https://www.concretepage.com/java/jdk-8/java-8-stream-sorted-example
+     */
+    public static void MoviesProcess(List<Movie> movies) {
+        movies.sort(Comparator.comparing(Movie::getRate));
+        printListMovies(movies);
+
+        movies.sort(new Comparator<Movie>() {
+            @Override
+            public int compare(Movie m1, Movie m2) {
+                return m1.getRate() > m2.getRate() ? -1 : 1;
+            }
+        });
+        printListMovies(movies);
+
+        movies.sort((m1, m2) -> {
+            return m1.getRate() > m2.getRate() ? 1 : -1;
+        });
+        printListMovies(movies);
+
+        printListMovies(movies.stream().sorted(Comparator.comparing(Movie::getRate, (m1, m2) -> {
+            return m1 > m2 ? -1 : 1;
+        })).collect(Collectors.toList()));
+
+        printListMovies(movies.stream().sorted(Comparator.comparing(Movie::getTitle)).collect(Collectors.toList()));
+        printListMovies(movies.stream().sorted(Comparator.comparing(Movie::getTitle)).map(movie1 -> {
+            return new Movie(movie1.getTitle(), movie1.getRate()*2);
+        }).collect(Collectors.toList()));
+
+        printListMovies(movies.stream().filter(movie -> {
+            return movie.getRate() == 3;
+        }).collect(Collectors.toList()));
+
+    }
+
+    public static void printListMovies(List<Movie> movies) {
+        movies.stream().forEach(movie1 -> {
+            System.out.print(movie1.toString());
+        });
+        System.out.println("");
+    }
+
+    public String frequencySort(String s) {
+        Map<Character, Integer> freqChars = new HashMap<>();
+        for (char c : s.toCharArray()) {
+            freqChars.put(c,freqChars.getOrDefault(c,0)+1);
+        }
+
+        StringBuilder stb = new StringBuilder();
+        freqChars.entrySet().stream().sorted(Comparator.comparing(Map.Entry::getValue, (e1, e2) -> {
+            return e1>e2 ? -1:1;
+        })).forEach(e -> {
+            for (int i=0; i<e.getValue(); i++) {
+                stb.append(e.getKey());
+            }
+        });
+        return stb.toString();
+    }
+
 
     public static void main(String[] args) {
         FreqChar freqChar = exe2("I love javaalot");
@@ -122,6 +204,32 @@ public class DigitOnUs {
 
         System.out.println("\n");
         System.out.println(exe4(2598));
+
+        List<Movie> movies = new LinkedList<>();
+        movies.add(new Movie("Pelicula4", 3));
+        movies.add(new Movie("Peliculon23", 4));
+        movies.add(new Movie("Pelicula11", 2));
+        movies.add(new Movie("movie", 1));
+        movies.add(new Movie("A que movie", 5));
+        movies.add(new Movie("Pelicula1", 3));
+        movies.add(new Movie("Pelicula1", -10));
+        MoviesProcess(movies);
+
+        Map<Integer, String> map = new HashMap<>();
+        map.put(90, "Ashish");
+        map.put(45, "Mahesh");
+        map.put(15, "Mahesh");
+        map.put(10, "Suresh");
+        map.put(30, "Nilesh");
+        map.entrySet().stream().sorted(Comparator.comparing(Map.Entry::getKey)).forEach(e -> {
+            System.out.println(e.getKey());
+        });
+        map.entrySet().stream().sorted(Comparator.comparing(Map.Entry::getValue)).forEach(e -> {
+            System.out.println(e.getValue());
+        });
+        map.entrySet().stream().sorted(Comparator.comparing(Map.Entry::getKey, (e1,e2) -> {
+            return e1>e2 ? 1:-1;
+        }));
 
     }
 }
